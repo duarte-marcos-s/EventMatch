@@ -45,6 +45,14 @@ function Matches() {
         return { ...match, otroPerfil }
       }))
 
+      // Marcar matches como vistos
+      await supabase
+        .from('matches')
+        .update({ visto_por_proveedor: true })
+        .eq(campo, user.id)
+        .eq('estado', 'aceptado')
+        .eq('visto_por_proveedor', false)
+
       setMatches(matchesConPerfil)
       setCargando(false)
     }
