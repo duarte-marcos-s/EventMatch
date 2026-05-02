@@ -178,7 +178,7 @@ function Inicio() {
                   </>
                 ) : (
                   <>
-                    <button onClick={() => setSeccion('buscar')} className="flex items-center gap-3 p-3 rounded-xl hover:bg-purple-50 transition-all text-left">
+                    <button onClick={() => navigate('/buscar')} className="flex items-center gap-3 p-3 rounded-xl hover:bg-purple-50 transition-all text-left">
                       <span className="text-2xl">🔍</span>
                       <div>
                         <p className="font-semibold text-gray-700">Buscar proveedores</p>
