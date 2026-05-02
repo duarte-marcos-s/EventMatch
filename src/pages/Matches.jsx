@@ -1,14 +1,15 @@
 import { useState, useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 import { supabase } from '../supabase'
 
 function Matches() {
   const navigate = useNavigate()
+  const [searchParams] = useSearchParams()
   const [usuario, setUsuario] = useState(null)
   const [perfil, setPerfil] = useState(null)
   const [matches, setMatches] = useState([])
   const [cargando, setCargando] = useState(true)
-  const [tab, setTab] = useState('pendientes')
+  const [tab, setTab] = useState(searchParams.get('tab') || 'pendientes')
 
   useEffect(() => {
     async function cargar() {
@@ -49,32 +50,6 @@ function Matches() {
     }
     cargar()
   }, [])
-
-  async function cargarMatches(user, perfilData) {
-    const tipo = perfilData?.tipo || user?.user_metadata?.tipo
-    const campo = tipo === 'proveedor' ? 'proveedor_id' : 'organizador_id'
-
-    const { data } = await supabase
-      .from('matches')
-      .select('*')
-      .eq(campo, user.id)
-      .order('created_at', { ascending: false })
-
-    if (!data) return
-
-    // Cargar perfil del otro usuario para cada match
-    const matchesConPerfil = await Promise.all(data.map(async (match) => {
-      const otroId = tipo === 'proveedor' ? match.organizador_id : match.proveedor_id
-      const { data: otroPerfil } = await supabase
-        .from('perfiles')
-        .select('*')
-        .eq('id', otroId)
-        .single()
-      return { ...match, otroPerfil }
-    }))
-
-    setMatches(matchesConPerfil)
-  }
 
   async function handleAceptar(matchId) {
     await supabase

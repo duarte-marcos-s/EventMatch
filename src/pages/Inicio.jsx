@@ -154,21 +154,21 @@ function Inicio() {
         {/* Tarjetas de stats */}
         <div className="grid grid-cols-2 gap-3 mb-6">
           <div
-            onClick={() => navigate('/matches')}
+            onClick={() => navigate('/matches?tab=aceptados')}
             className="bg-white rounded-2xl shadow p-4 text-center cursor-pointer hover:shadow-md transition-all"
           >
             <p className="text-3xl font-bold text-yellow-500">{stats.matchesPendientes}</p>
             <p className="text-gray-400 text-sm mt-1">⏳ Pendientes</p>
           </div>
           <div
-            onClick={() => navigate('/matches')}
+            onClick={() => navigate('/matches?tab=aceptados')}
             className="bg-white rounded-2xl shadow p-4 text-center cursor-pointer hover:shadow-md transition-all"
           >
             <p className="text-3xl font-bold text-green-500">{stats.matchesAceptados}</p>
             <p className="text-gray-400 text-sm mt-1">✅ Aceptados</p>
           </div>
           <div
-            onClick={() => navigate('/matches')}
+            onClick={() => navigate('/matches?tab=aceptados')}
             className="bg-white rounded-2xl shadow p-4 text-center cursor-pointer hover:shadow-md transition-all relative"
           >
             <p className="text-3xl font-bold text-pink-500">{stats.matchesNuevos}</p>
@@ -178,7 +178,7 @@ function Inicio() {
             )}
           </div>
           <div
-            onClick={() => navigate('/matches')}
+            onClick={() => navigate('/matches?tab=aceptados')}
             className="bg-white rounded-2xl shadow p-4 text-center cursor-pointer hover:shadow-md transition-all relative"
           >
             <p className="text-3xl font-bold text-blue-500">{stats.mensajesSinLeer}</p>
@@ -195,7 +195,7 @@ function Inicio() {
           <div className="flex flex-col gap-2">
             {tipo === 'proveedor' ? (
               <>
-                <button onClick={() => navigate('/matches')} className="flex items-center gap-3 p-3 rounded-xl hover:bg-purple-50 transition-all text-left">
+                <button onClick={() => navigate('/matches?tab=aceptados')} className="flex items-center gap-3 p-3 rounded-xl hover:bg-purple-50 transition-all text-left">
                   <span className="text-2xl">❤️</span>
                   <div>
                     <p className="font-semibold text-gray-700">Ver matches</p>
@@ -212,7 +212,7 @@ function Inicio() {
                     </span>
                   )}
                 </button>
-                <button onClick={() => navigate('/matches')} className="flex items-center gap-3 p-3 rounded-xl hover:bg-purple-50 transition-all text-left">
+                <button onClick={() => navigate('/matches?tab=aceptados')} className="flex items-center gap-3 p-3 rounded-xl hover:bg-purple-50 transition-all text-left">
                   <span className="text-2xl">💬</span>
                   <div>
                     <p className="font-semibold text-gray-700">Mensajes</p>
@@ -248,7 +248,7 @@ function Inicio() {
                   </div>
                   <span className="ml-auto text-gray-300">→</span>
                 </button>
-                <button onClick={() => navigate('/matches')} className="flex items-center gap-3 p-3 rounded-xl hover:bg-purple-50 transition-all text-left">
+                <button onClick={() => navigate('/matches?tab=aceptados')} className="flex items-center gap-3 p-3 rounded-xl hover:bg-purple-50 transition-all text-left">
                   <span className="text-2xl">❤️</span>
                   <div>
                     <p className="font-semibold text-gray-700">Mis matches</p>
@@ -265,7 +265,7 @@ function Inicio() {
                     </span>
                   )}
                 </button>
-                <button onClick={() => navigate('/matches')} className="flex items-center gap-3 p-3 rounded-xl hover:bg-purple-50 transition-all text-left">
+                <button onClick={() => navigate('/matches?tab=aceptados')} className="flex items-center gap-3 p-3 rounded-xl hover:bg-purple-50 transition-all text-left">
                   <span className="text-2xl">💬</span>
                   <div>
                     <p className="font-semibold text-gray-700">Mensajes</p>
@@ -303,7 +303,7 @@ function Inicio() {
           <span className="text-2xl">🏠</span>
           <span className="text-xs font-semibold">Inicio</span>
         </button>
-        <button onClick={() => navigate('/matches')} className="flex flex-col items-center gap-1 text-gray-300 relative">
+        <button onClick={() => navigate('/matches?tab=aceptados')} className="flex flex-col items-center gap-1 text-gray-300 relative">
           <span className="text-2xl">❤️</span>
           <span className="text-xs font-semibold">Matches</span>
           {stats.matchesPendientes > 0 && (
@@ -320,7 +320,7 @@ function Inicio() {
             <span className="text-2xl">{tipo === 'organizador' ? '🔍' : '💬'}</span>
           </div>
         </button>
-        <button onClick={() => navigate('/matches')} className="flex flex-col items-center gap-1 text-gray-300 relative">
+        <button onClick={() => navigate('/matches?tab=aceptados')} className="flex flex-col items-center gap-1 text-gray-300 relative">
           <span className="text-2xl">💬</span>
           <span className="text-xs font-semibold">Mensajes</span>
           {stats.mensajesSinLeer > 0 && (
