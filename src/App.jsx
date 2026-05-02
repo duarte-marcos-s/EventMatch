@@ -5,6 +5,7 @@ import Bienvenido from './pages/Bienvenido'
 import Login from './pages/Login'
 import Inicio from './pages/Inicio'
 import CompletarPerfil from './pages/CompletarPerfil'
+import Perfil from './pages/Perfil'
 
 function App() {
   return (
@@ -16,6 +17,7 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/inicio" element={<Inicio />} />
         <Route path="/completar-perfil" element={<CompletarPerfil />} />
+        <Route path="/perfil" element={<Perfil />} />
       </Routes>
     </BrowserRouter>
   )

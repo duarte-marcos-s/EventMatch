@@ -29,7 +29,11 @@ function Registro() {
       setError(error.message)
       setCargando(false)
     } else {
-      navigate('/bienvenido')
+      if (tipo === 'proveedor') {
+  navigate('/completar-perfil')
+} else {
+  navigate('/bienvenido')
+}
     }
   }
 
