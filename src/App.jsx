@@ -11,6 +11,8 @@ import Valoracion from './pages/Valoracion'
 import Chat from './pages/Chat'
 import Matches from './pages/Matches'
 import Presupuesto from './pages/Presupuesto'
+import Suscripcion from './pages/Suscripcion'
+import SuscripcionExitosa from './pages/SuscripcionExitosa'
 
 function App() {
   return (
@@ -28,6 +30,8 @@ function App() {
         <Route path="/chat" element={<Chat />} />
         <Route path="/matches" element={<Matches />} />
         <Route path="/presupuesto" element={<Presupuesto />} />
+        <Route path="/suscripcion" element={<Suscripcion />} />
+        <Route path="/suscripcion-exitosa" element={<SuscripcionExitosa />} />
       </Routes>
     </BrowserRouter>
   )
