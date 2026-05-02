@@ -10,6 +10,7 @@ import Buscar from './pages/Buscar'
 import Valoracion from './pages/Valoracion'
 import Chat from './pages/Chat'
 import Matches from './pages/Matches'
+import Presupuesto from './pages/Presupuesto'
 
 function App() {
   return (
@@ -26,6 +27,7 @@ function App() {
         <Route path="/valoracion" element={<Valoracion />} />
         <Route path="/chat" element={<Chat />} />
         <Route path="/matches" element={<Matches />} />
+        <Route path="/presupuesto" element={<Presupuesto />} />
       </Routes>
     </BrowserRouter>
   )

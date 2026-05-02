@@ -141,12 +141,20 @@ function Chat() {
           <p className="text-xs text-purple-500">{otroPerfil?.subrubro || otroPerfil?.rubro || 'Organizador'}</p>
         </div>
 
-        <button
-          onClick={() => navigate(`/valoracion?match=${matchId}&proveedor=${otroPerfil?.id}`)}
-          className="text-yellow-500 text-sm font-semibold"
-        >
-          ⭐ Valorar
-        </button>
+        <div className="flex gap-2">
+  <button
+    onClick={() => navigate(`/presupuesto?match=${matchId}`)}
+    className="text-purple-500 text-sm font-semibold"
+  >
+    📋 Presupuesto
+  </button>
+  <button
+    onClick={() => navigate(`/valoracion?match=${matchId}&proveedor=${otroPerfil?.id}`)}
+    className="text-yellow-500 text-sm font-semibold"
+  >
+    ⭐ Valorar
+  </button>
+</div>
       </div>
 
       {/* Info del evento */}
