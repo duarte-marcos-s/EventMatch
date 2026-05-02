@@ -35,7 +35,7 @@ function Bienvenida() {
         </div>
 
         <p className="text-gray-400 text-sm mt-8">
-          ¿Ya tenés cuenta? <span className="text-purple-500 cursor-pointer hover:underline">Iniciá sesión</span>
+          ¿Ya tenés cuenta? <span onClick={() => navigate('/login')} className="text-purple-500 cursor-pointer hover:underline">Iniciá sesión</span>
         </p>
 
       </div>

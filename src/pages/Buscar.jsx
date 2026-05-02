@@ -147,10 +147,13 @@ function Buscar() {
   async function handleLike() {
     setAnimacion('like')
     const proveedor = proveedores[indiceActual]
-    setMatchesDados(prev => [...prev, proveedor.nombre])
 
-    await supabase.from('matches').insert({
-      organizador_id: usuario.id,
+    const { data: { user } } = await supabase.auth.getUser()
+    console.log('Usuario:', user?.id)
+    console.log('Proveedor:', proveedor?.id)
+
+    const { data, error } = await supabase.from('matches').insert({
+      organizador_id: user.id,
       proveedor_id: proveedor.id,
       estado: 'pendiente',
       tipo_evento: tipoEvento,
@@ -158,6 +161,9 @@ function Buscar() {
       fecha_evento: fechaEvento || null,
       descripcion_evento: descripcion,
     })
+
+    console.log('Match guardado:', data)
+    console.log('Error:', error)
 
     setTimeout(() => {
       setAnimacion(null)

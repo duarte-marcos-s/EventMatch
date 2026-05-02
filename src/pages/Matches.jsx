@@ -86,7 +86,7 @@ function Matches() {
   const tipo = perfil?.tipo || usuario?.user_metadata?.tipo
 
   const matchesFiltrados = matches.filter(m => {
-    if (tab === 'pendientes') return m.estado === 'pendiente'
+    if (tab === 'pendientes') return m.estado === 'pendiente' || m.estado === null
     if (tab === 'aceptados') return m.estado === 'aceptado'
     if (tab === 'rechazados') return m.estado === 'rechazado'
     return true
@@ -105,18 +105,21 @@ function Matches() {
       {/* Tabs */}
       <div className="bg-white border-b border-gray-100 px-4 flex gap-2 sticky top-14 z-10">
         {['pendientes', 'aceptados', 'rechazados'].map(t => (
-          <button
-            key={t}
-            onClick={() => setTab(t)}
-            className={`py-3 px-4 text-sm font-semibold capitalize transition-all border-b-2 ${
-              tab === t
-                ? 'border-purple-600 text-purple-600'
-                : 'border-transparent text-gray-400 hover:text-gray-600'
-            }`}
-          >
-            {t} ({matches.filter(m => m.estado === t).length})
-          </button>
-        ))}
+  <button
+    key={t}
+    onClick={() => setTab(t)}
+    className={`py-3 px-4 text-sm font-semibold capitalize transition-all border-b-2 ${
+      tab === t
+        ? 'border-purple-600 text-purple-600'
+        : 'border-transparent text-gray-400 hover:text-gray-600'
+    }`}
+  >
+    {t} ({matches.filter(m => {
+      if (t === 'pendientes') return m.estado === 'pendiente' || m.estado === null
+      return m.estado === t
+    }).length})
+  </button>
+))}
       </div>
 
       <div className="max-w-lg mx-auto px-4 py-6 flex flex-col gap-4">
