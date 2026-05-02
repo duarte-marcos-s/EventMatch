@@ -7,6 +7,7 @@ import Inicio from './pages/Inicio'
 import CompletarPerfil from './pages/CompletarPerfil'
 import Perfil from './pages/Perfil'
 import Buscar from './pages/Buscar'
+import Valoracion from './pages/Valoracion'
 
 function App() {
   return (
@@ -20,6 +21,7 @@ function App() {
         <Route path="/completar-perfil" element={<CompletarPerfil />} />
         <Route path="/perfil" element={<Perfil />} />
         <Route path="/buscar" element={<Buscar />} />
+        <Route path="/valoracion" element={<Valoracion />} />
       </Routes>
     </BrowserRouter>
   )

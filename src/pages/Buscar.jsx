@@ -385,7 +385,14 @@ function Buscar() {
 
               <div className="p-6">
                 <h3 className="text-2xl font-bold text-gray-700">{proveedor.nombre}</h3>
-                <p className="text-gray-400 text-sm mt-1">📍 {proveedor.zona_ciudad}, {proveedor.zona_provincia}</p>
+<div className="flex items-center gap-2 mt-1">
+  <p className="text-gray-400 text-sm">📍 {proveedor.zona_ciudad}, {proveedor.zona_provincia}</p>
+  {proveedor.total_valoraciones > 0 && (
+    <span className="bg-yellow-50 text-yellow-600 text-xs font-bold px-2 py-1 rounded-full">
+      ⭐ {proveedor.valoracion_promedio} ({proveedor.total_valoraciones})
+    </span>
+  )}
+</div>
 
                 {proveedor.descripcion && (
                   <p className="text-gray-500 text-sm mt-3 leading-relaxed">{proveedor.descripcion}</p>
