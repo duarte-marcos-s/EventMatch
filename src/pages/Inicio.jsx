@@ -151,7 +151,7 @@ function Inicio() {
               <div className="flex flex-col gap-2">
                 {tipo === 'proveedor' ? (
                   <>
-                    <button onClick={() => setSeccion('matches')} className="flex items-center gap-3 p-3 rounded-xl hover:bg-purple-50 transition-all text-left">
+                    <button onClick={() => navigate('/matches')} className="flex items-center gap-3 p-3 rounded-xl hover:bg-purple-50 transition-all text-left">
                       <span className="text-2xl">❤️</span>
                       <div>
                         <p className="font-semibold text-gray-700">Ver matches</p>
@@ -186,7 +186,7 @@ function Inicio() {
                       </div>
                       <span className="ml-auto text-gray-300">→</span>
                     </button>
-                    <button onClick={() => setSeccion('matches')} className="flex items-center gap-3 p-3 rounded-xl hover:bg-purple-50 transition-all text-left">
+                    <button onClick={() => navigate('/matches')} className="flex items-center gap-3 p-3 rounded-xl hover:bg-purple-50 transition-all text-left">
                       <span className="text-2xl">❤️</span>
                       <div>
                         <p className="font-semibold text-gray-700">Mis matches</p>
@@ -262,7 +262,7 @@ function Inicio() {
           <span className="text-2xl">🏠</span>
           <span className="text-xs font-semibold">Inicio</span>
         </button>
-        <button onClick={() => setSeccion('matches')} className={`flex flex-col items-center gap-1 ${seccion === 'matches' ? 'text-purple-600' : 'text-gray-300'}`}>
+        <button onClick={() => navigate('/matches')} className={`flex flex-col items-center gap-1 ${seccion === 'matches' ? 'text-purple-600' : 'text-gray-300'}`}>
           <span className="text-2xl">❤️</span>
           <span className="text-xs font-semibold">Matches</span>
         </button>

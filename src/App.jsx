@@ -8,6 +8,8 @@ import CompletarPerfil from './pages/CompletarPerfil'
 import Perfil from './pages/Perfil'
 import Buscar from './pages/Buscar'
 import Valoracion from './pages/Valoracion'
+import Chat from './pages/Chat'
+import Matches from './pages/Matches'
 
 function App() {
   return (
@@ -22,6 +24,8 @@ function App() {
         <Route path="/perfil" element={<Perfil />} />
         <Route path="/buscar" element={<Buscar />} />
         <Route path="/valoracion" element={<Valoracion />} />
+        <Route path="/chat" element={<Chat />} />
+        <Route path="/matches" element={<Matches />} />
       </Routes>
     </BrowserRouter>
   )
