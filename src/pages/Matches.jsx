@@ -23,7 +23,28 @@ function Matches() {
         .single()
       setPerfil(perfilData)
 
-      await cargarMatches(user, perfilData)
+      const tipo = perfilData?.tipo || user?.user_metadata?.tipo
+      const campo = tipo === 'proveedor' ? 'proveedor_id' : 'organizador_id'
+
+      const { data } = await supabase
+        .from('matches')
+        .select('*')
+        .eq(campo, user.id)
+        .order('created_at', { ascending: false })
+
+      if (!data) { setCargando(false); return }
+
+      const matchesConPerfil = await Promise.all(data.map(async (match) => {
+        const otroId = tipo === 'proveedor' ? match.organizador_id : match.proveedor_id
+        const { data: otroPerfil } = await supabase
+          .from('perfiles')
+          .select('*')
+          .eq('id', otroId)
+          .single()
+        return { ...match, otroPerfil }
+      }))
+
+      setMatches(matchesConPerfil)
       setCargando(false)
     }
     cargar()
@@ -115,9 +136,11 @@ function Matches() {
     }`}
   >
     {t} ({matches.filter(m => {
-      if (t === 'pendientes') return m.estado === 'pendiente' || m.estado === null
-      return m.estado === t
-    }).length})
+  if (t === 'pendientes') return m.estado === 'pendiente' || m.estado === null
+  if (t === 'aceptados') return m.estado === 'aceptado'
+  if (t === 'rechazados') return m.estado === 'rechazado'
+  return false
+}).length})
   </button>
 ))}
       </div>
