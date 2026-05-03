@@ -54,6 +54,10 @@ function Perfil() {
   const [nombreOrg, setNombreOrg] = useState('')
   const [tiposEventos, setTiposEventos] = useState([])
 
+  // Respuestas Rapidas
+  const [respuestasRapidas, setRespuestasRapidas] = useState([])
+  const [nuevaRespuesta, setNuevaRespuesta] = useState('')
+
   useEffect(() => {
     async function cargarPerfil() {
       const { data: { user } } = await supabase.auth.getUser()
@@ -82,6 +86,7 @@ function Perfil() {
         setPrecioHasta(data.precio_hasta || '')
         setNombreOrg(data.nombre_organizacion || '')
         setTiposEventos(data.tipo_eventos || [])
+        setRespuestasRapidas(data.respuestas_rapidas || [])
       }
       setCargando(false)
     }
@@ -93,6 +98,16 @@ function Perfil() {
       prev.includes(tipo) ? prev.filter(t => t !== tipo) : [...prev, tipo]
     )
   }
+
+  function agregarRespuesta() {
+  if (!nuevaRespuesta.trim()) return
+  setRespuestasRapidas(prev => [...prev, nuevaRespuesta.trim()])
+  setNuevaRespuesta('')
+}
+
+function quitarRespuesta(index) {
+  setRespuestasRapidas(prev => prev.filter((_, i) => i !== index))
+}
 
   async function handleGuardar() {
     setGuardando(true)
@@ -127,6 +142,7 @@ function Perfil() {
       precio_hasta: precioTipo === 'rango' ? parseInt(precioHasta) : null,
       nombre_organizacion: nombreOrg,
       tipo_eventos: tiposEventos,
+      respuestas_rapidas: respuestasRapidas,
     })
 
     if (error) {
@@ -344,6 +360,51 @@ function Perfil() {
                     <input type="number" placeholder="Desde $" value={precioDesde} onChange={(e) => setPrecioDesde(e.target.value)} disabled={!editando} className="w-full border border-gray-200 rounded-xl px-4 py-3 focus:outline-none focus:border-purple-400 text-gray-700 disabled:bg-gray-50" />
                     <input type="number" placeholder="Hasta $" value={precioHasta} onChange={(e) => setPrecioHasta(e.target.value)} disabled={!editando} className="w-full border border-gray-200 rounded-xl px-4 py-3 focus:outline-none focus:border-purple-400 text-gray-700 disabled:bg-gray-50" />
                   </div>
+                )}
+              </div>
+              <div>
+                <label className="text-sm font-semibold text-gray-600 mb-2 block">
+                  ⚡ Respuestas rápidas <span className="font-normal text-gray-400">(para usar en el chat)</span>
+                </label>
+
+                <div className="flex flex-col gap-2 mb-3">
+                  {respuestasRapidas.map((respuesta, i) => (
+                    <div key={i} className="bg-purple-50 rounded-xl p-3 flex items-start gap-2">
+                      <p className="text-gray-700 text-sm flex-1">{respuesta}</p>
+                      {editando && (
+                        <button
+                          onClick={() => quitarRespuesta(i)}
+                          className="text-red-400 hover:text-red-600 text-sm font-bold shrink-0"
+                        >
+                          ✕
+                        </button>
+                      )}
+                    </div>
+                  ))}
+                </div>
+
+                {editando && (
+                  <div className="flex gap-2">
+                    <input
+                      type="text"
+                      placeholder="Nueva respuesta rápida..."
+                      value={nuevaRespuesta}
+                      onChange={(e) => setNuevaRespuesta(e.target.value)}
+                      onKeyDown={(e) => e.key === 'Enter' && agregarRespuesta()}
+                      className="flex-1 border border-gray-200 rounded-xl px-4 py-3 focus:outline-none focus:border-purple-400 text-gray-700 text-sm"
+                    />
+                    <button
+                      onClick={agregarRespuesta}
+                      disabled={!nuevaRespuesta.trim()}
+                      className="bg-purple-100 hover:bg-purple-200 text-purple-700 font-semibold px-4 rounded-xl transition-all disabled:opacity-40"
+                    >
+                      +
+                    </button>
+                  </div>
+                )}
+
+                {respuestasRapidas.length === 0 && !editando && (
+                  <p className="text-gray-400 text-sm italic">No tenés respuestas rápidas configuradas</p>
                 )}
               </div>
             </>

@@ -8,12 +8,14 @@ function Chat() {
   const matchId = searchParams.get('match')
 
   const [usuario, setUsuario] = useState(null)
+  const [perfil, setPerfil] = useState(null)
   const [match, setMatch] = useState(null)
   const [otroPerfil, setOtroPerfil] = useState(null)
   const [mensajes, setMensajes] = useState([])
   const [nuevoMensaje, setNuevoMensaje] = useState('')
   const [cargando, setCargando] = useState(true)
   const [enviando, setEnviando] = useState(false)
+  const [mostrarRapidas, setMostrarRapidas] = useState(false)
   const bottomRef = useRef(null)
 
   useEffect(() => {
@@ -22,7 +24,13 @@ function Chat() {
       if (!user) { navigate('/login'); return }
       setUsuario(user)
 
-      // Cargar match
+      const { data: perfilData } = await supabase
+        .from('perfiles')
+        .select('*')
+        .eq('id', user.id)
+        .single()
+      setPerfil(perfilData)
+
       const { data: matchData } = await supabase
         .from('matches')
         .select('*')
@@ -30,20 +38,17 @@ function Chat() {
         .single()
       setMatch(matchData)
 
-      // Determinar quién es el otro usuario
       const otroId = matchData.organizador_id === user.id
         ? matchData.proveedor_id
         : matchData.organizador_id
 
-      // Cargar perfil del otro
-      const { data: otroPerfil } = await supabase
+      const { data: otroPerfilData } = await supabase
         .from('perfiles')
         .select('*')
         .eq('id', otroId)
         .single()
-      setOtroPerfil(otroPerfil)
+      setOtroPerfil(otroPerfilData)
 
-      // Cargar mensajes
       const { data: mensajesData } = await supabase
         .from('mensajes')
         .select('*')
@@ -51,7 +56,6 @@ function Chat() {
         .order('created_at', { ascending: true })
       setMensajes(mensajesData || [])
 
-      // Marcar mensajes como leídos
       await supabase
         .from('mensajes')
         .update({ leido: true })
@@ -63,7 +67,6 @@ function Chat() {
     cargar()
   }, [])
 
-  // Suscripción en tiempo real
   useEffect(() => {
     if (!matchId) return
 
@@ -82,36 +85,35 @@ function Chat() {
     return () => supabase.removeChannel(canal)
   }, [matchId])
 
-  // Auto scroll al último mensaje
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
   }, [mensajes])
 
-  async function handleEnviar() {
-    if (!nuevoMensaje.trim()) return
+  async function handleEnviar(textoCustom = null) {
+    const texto = textoCustom || nuevoMensaje
+    if (!texto.trim()) return
     setEnviando(true)
 
     await supabase.from('mensajes').insert({
       match_id: matchId,
       emisor_id: usuario.id,
-      contenido: nuevoMensaje.trim(),
+      contenido: texto.trim(),
     })
 
-    setNuevoMensaje('')
+    if (!textoCustom) setNuevoMensaje('')
+    setMostrarRapidas(false)
     setEnviando(false)
   }
 
   function formatHora(timestamp) {
     return new Date(timestamp).toLocaleTimeString('es-AR', {
-      hour: '2-digit',
-      minute: '2-digit'
+      hour: '2-digit', minute: '2-digit'
     })
   }
 
   function formatFecha(timestamp) {
     return new Date(timestamp).toLocaleDateString('es-AR', {
-      day: 'numeric',
-      month: 'long'
+      day: 'numeric', month: 'long'
     })
   }
 
@@ -121,10 +123,11 @@ function Chat() {
     </div>
   )
 
+  const respuestasRapidas = perfil?.respuestas_rapidas || []
+
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
 
-      {/* Header */}
       <div className="bg-white shadow-sm px-4 py-3 flex items-center gap-3 sticky top-0 z-10">
         <button onClick={() => navigate('/inicio')} className="text-purple-600 font-semibold">←</button>
 
@@ -142,22 +145,21 @@ function Chat() {
         </div>
 
         <div className="flex gap-2">
-  <button
-    onClick={() => navigate(`/presupuesto?match=${matchId}`)}
-    className="text-purple-500 text-sm font-semibold"
-  >
-    📋 Presupuesto
-  </button>
-  <button
-    onClick={() => navigate(`/valoracion?match=${matchId}&proveedor=${otroPerfil?.id}`)}
-    className="text-yellow-500 text-sm font-semibold"
-  >
-    ⭐ Valorar
-  </button>
-</div>
+          <button
+            onClick={() => navigate(`/presupuesto?match=${matchId}`)}
+            className="text-purple-500 text-sm font-semibold"
+          >
+            📋
+          </button>
+          <button
+            onClick={() => navigate(`/valoracion?match=${matchId}&proveedor=${otroPerfil?.id}`)}
+            className="text-yellow-500 text-sm font-semibold"
+          >
+            ⭐
+          </button>
+        </div>
       </div>
 
-      {/* Info del evento */}
       {match && (
         <div className="bg-purple-50 px-4 py-2 text-center">
           <p className="text-purple-600 text-xs font-semibold">
@@ -168,7 +170,6 @@ function Chat() {
         </div>
       )}
 
-      {/* Mensajes */}
       <div className="flex-1 overflow-y-auto px-4 py-4 flex flex-col gap-3">
 
         {mensajes.length === 0 && (
@@ -213,8 +214,40 @@ function Chat() {
         <div ref={bottomRef} />
       </div>
 
-      {/* Input mensaje */}
-      <div className="bg-white border-t border-gray-100 px-4 py-3 flex items-center gap-3 sticky bottom-0">
+      {/* Respuestas rápidas (solo proveedor) */}
+      {mostrarRapidas && respuestasRapidas.length > 0 && (
+        <div className="bg-white border-t border-gray-100 px-4 py-3">
+          <div className="flex justify-between items-center mb-2">
+            <p className="text-xs font-bold text-gray-500">⚡ RESPUESTAS RÁPIDAS</p>
+            <button onClick={() => navigate('/perfil')} className="text-xs text-purple-500 font-semibold">
+              ✏️ Editar
+            </button>
+          </div>
+          <div className="flex flex-col gap-2 max-h-48 overflow-y-auto">
+            {respuestasRapidas.map((respuesta, i) => (
+              <button
+                key={i}
+                onClick={() => handleEnviar(respuesta)}
+                className="text-left bg-purple-50 hover:bg-purple-100 text-gray-700 text-sm px-3 py-2 rounded-xl transition-all"
+              >
+                {respuesta}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+
+      <div className="bg-white border-t border-gray-100 px-4 py-3 flex items-center gap-2 sticky bottom-0">
+        {perfil?.tipo === 'proveedor' && respuestasRapidas.length > 0 && (
+          <button
+            onClick={() => setMostrarRapidas(!mostrarRapidas)}
+            className={`w-10 h-10 rounded-full flex items-center justify-center transition-all ${
+              mostrarRapidas ? 'bg-purple-600 text-white' : 'bg-gray-100 text-gray-500'
+            }`}
+          >
+            ⚡
+          </button>
+        )}
         <input
           type="text"
           placeholder="Escribí un mensaje..."
@@ -224,7 +257,7 @@ function Chat() {
           className="flex-1 border border-gray-200 rounded-2xl px-4 py-3 focus:outline-none focus:border-purple-400 text-gray-700 text-sm"
         />
         <button
-          onClick={handleEnviar}
+          onClick={() => handleEnviar()}
           disabled={enviando || !nuevoMensaje.trim()}
           className="bg-purple-600 hover:bg-purple-700 text-white w-11 h-11 rounded-full flex items-center justify-center transition-all disabled:opacity-50 shadow-lg"
         >
