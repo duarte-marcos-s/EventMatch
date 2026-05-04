@@ -147,23 +147,27 @@ function Buscar() {
   async function handleLike() {
     setAnimacion('like')
     const proveedor = proveedores[indiceActual]
+    setMatchesDados(prev => [...prev, proveedor.nombre])
 
-    const { data: { user } } = await supabase.auth.getUser()
-    console.log('Usuario:', user?.id)
-    console.log('Proveedor:', proveedor?.id)
-
-    const { data, error } = await supabase.from('matches').insert({
-      organizador_id: user.id,
+    // Crear el match
+    const { data: matchCreado } = await supabase.from('matches').insert({
+      organizador_id: usuario.id,
       proveedor_id: proveedor.id,
       estado: 'pendiente',
       tipo_evento: tipoEvento,
       cantidad_personas: cantidadPersonas ? parseInt(cantidadPersonas) : null,
       fecha_evento: fechaEvento || null,
       descripcion_evento: descripcion,
-    })
+    }).select().single()
 
-    console.log('Match guardado:', data)
-    console.log('Error:', error)
+    // Si el proveedor tiene mensaje de bienvenida, enviarlo automáticamente
+    if (matchCreado && proveedor.mensaje_bienvenida && proveedor.mensaje_bienvenida.trim()) {
+      await supabase.from('mensajes').insert({
+        match_id: matchCreado.id,
+        emisor_id: proveedor.id,
+        contenido: proveedor.mensaje_bienvenida.trim(),
+      })
+    }
 
     setTimeout(() => {
       setAnimacion(null)

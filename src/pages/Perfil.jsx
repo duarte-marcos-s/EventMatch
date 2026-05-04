@@ -58,6 +58,9 @@ function Perfil() {
   const [respuestasRapidas, setRespuestasRapidas] = useState([])
   const [nuevaRespuesta, setNuevaRespuesta] = useState('')
 
+  // Mensaje de Bienvenida
+  const [mensajeBienvenida, setMensajeBienvenida] = useState('')
+
   useEffect(() => {
     async function cargarPerfil() {
       const { data: { user } } = await supabase.auth.getUser()
@@ -87,6 +90,7 @@ function Perfil() {
         setNombreOrg(data.nombre_organizacion || '')
         setTiposEventos(data.tipo_eventos || [])
         setRespuestasRapidas(data.respuestas_rapidas || [])
+        setMensajeBienvenida(data.mensaje_bienvenida || '')
       }
       setCargando(false)
     }
@@ -143,6 +147,7 @@ function quitarRespuesta(index) {
       nombre_organizacion: nombreOrg,
       tipo_eventos: tiposEventos,
       respuestas_rapidas: respuestasRapidas,
+      mensaje_bienvenida: mensajeBienvenida,
     })
 
     if (error) {
@@ -362,6 +367,24 @@ function quitarRespuesta(index) {
                   </div>
                 )}
               </div>
+
+              <div>
+                <label className="text-sm font-semibold text-gray-600 mb-1 block">
+                  💬 Mensaje automático de bienvenida <span className="font-normal text-gray-400">(se envía al recibir un match)</span>
+                </label>
+                <textarea
+                  value={mensajeBienvenida}
+                  onChange={(e) => setMensajeBienvenida(e.target.value)}
+                  disabled={!editando}
+                  placeholder="Ej: ¡Hola! Gracias por tu interés. Soy [nombre] y ofrezco [servicio]. ¿Cuándo podemos hablar?"
+                  rows={3}
+                  className="w-full border border-gray-200 rounded-xl px-4 py-3 focus:outline-none focus:border-purple-400 text-gray-700 disabled:bg-gray-50 disabled:text-gray-400 resize-none text-sm"
+                />
+                <p className="text-gray-400 text-xs mt-1">
+                  Si está vacío, no se enviará ningún mensaje automático.
+                </p>
+              </div>
+
               <div>
                 <label className="text-sm font-semibold text-gray-600 mb-2 block">
                   ⚡ Respuestas rápidas <span className="font-normal text-gray-400">(para usar en el chat)</span>

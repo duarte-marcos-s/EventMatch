@@ -42,7 +42,30 @@ function Matches() {
           .select('*')
           .eq('id', otroId)
           .single()
-        return { ...match, otroPerfil }
+
+        // Contar mensajes sin leer
+        const { data: mensajesSinLeer } = await supabase
+          .from('mensajes')
+          .select('id')
+          .eq('match_id', match.id)
+          .eq('leido', false)
+          .neq('emisor_id', user.id)
+
+        // Obtener último mensaje
+        const { data: ultimoMensaje } = await supabase
+          .from('mensajes')
+          .select('contenido, created_at, emisor_id')
+          .eq('match_id', match.id)
+          .order('created_at', { ascending: false })
+          .limit(1)
+          .single()
+
+        return {
+          ...match,
+          otroPerfil,
+          mensajesSinLeer: mensajesSinLeer?.length || 0,
+          ultimoMensaje: ultimoMensaje || null,
+        }
       }))
 
       // Marcar matches como vistos
@@ -147,24 +170,39 @@ function Matches() {
 
               {/* Info del otro usuario */}
               <div className="flex items-center gap-3 mb-3">
-                <div className="w-12 h-12 rounded-xl bg-purple-100 flex items-center justify-center overflow-hidden">
-                  {match.otroPerfil?.fotos?.[0] ? (
-                    <img src={match.otroPerfil.fotos[0]} alt="foto" className="w-full h-full object-cover" />
-                  ) : (
-                    <span className="text-2xl">{tipo === 'proveedor' ? '🗂️' : '🛠️'}</span>
+                <div className="relative shrink-0">
+                  <div className="w-12 h-12 rounded-xl bg-purple-100 flex items-center justify-center overflow-hidden">
+                    {match.otroPerfil?.fotos?.[0] ? (
+                      <img src={match.otroPerfil.fotos[0]} alt="foto" className="w-full h-full object-cover" />
+                    ) : (
+                      <span className="text-2xl">{tipo === 'proveedor' ? '🗂️' : '🛠️'}</span>
+                    )}
+                  </div>
+                  {match.mensajesSinLeer > 0 && (
+                    <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold w-5 h-5 rounded-full flex items-center justify-center shadow-lg ring-2 ring-white">
+                      {match.mensajesSinLeer}
+                    </span>
                   )}
                 </div>
-                <div className="flex-1">
+                <div className="flex-1 min-w-0">
                   <h3 className="font-bold text-gray-700">{match.otroPerfil?.nombre || 'Usuario'}</h3>
                   <p className="text-purple-500 text-xs">{match.otroPerfil?.subrubro || match.otroPerfil?.rubro || 'Organizador'}</p>
+                  {match.ultimoMensaje && (
+                    <p className={`text-xs truncate mt-1 ${
+                      match.mensajesSinLeer > 0 ? 'text-gray-700 font-semibold' : 'text-gray-400'
+                    }`}>
+                      {match.ultimoMensaje.emisor_id !== match.otroPerfil?.id && '✓ '}
+                      {match.ultimoMensaje.contenido}
+                    </p>
+                  )}
                 </div>
-                <span className={`text-xs font-bold px-2 py-1 rounded-full ${
+                <span className={`text-xs font-bold px-2 py-1 rounded-full shrink-0 ${
                   match.estado === 'pendiente' ? 'bg-yellow-50 text-yellow-600' :
                   match.estado === 'aceptado' ? 'bg-green-50 text-green-600' :
                   'bg-red-50 text-red-400'
                 }`}>
-                  {match.estado === 'pendiente' ? '⏳ Pendiente' :
-                   match.estado === 'aceptado' ? '✅ Aceptado' : '❌ Rechazado'}
+                  {match.estado === 'pendiente' ? '⏳' :
+                   match.estado === 'aceptado' ? '✅' : '❌'}
                 </span>
               </div>
 
